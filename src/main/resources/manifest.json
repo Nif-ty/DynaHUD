@@ -1,0 +1,14 @@
+{
+  "Group": "co.headpats",
+  "Name": "DynaHUD",
+  "Version": "1.2.2",
+  "Description": "A simple automatic HUD hider for immersive gameplay.",
+  "Authors": [
+    {
+      "Name": "Niftly"
+    }
+  ],
+  "OptionalDependencies": {},
+  "Main": "co.headpats.plugin.DynaHudPlugin",
+  "IncludesAssetPack": true
+}
