@@ -1,260 +1,220 @@
 $C = "../Common.ui";
 
-@CloseButtonStyle = TextButtonStyle(
-    Default: (Background: #2b3542, LabelStyle: (FontSize: 15, TextColor: #96a9be, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
-    Hovered: (Background: #3b4552, LabelStyle: (FontSize: 15, TextColor: #b6c9de, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
-    Pressed: (Background: #1b2532, LabelStyle: (FontSize: 15, TextColor: #96a9be, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center))
-);
+@VerticalSpacer = Group {
+  LayoutMode: Top;
+  Anchor: (Height: 5);
+};
 
-@NavButtonStyle = TextButtonStyle(
-    Default: (Background: #2b3542(0.0), LabelStyle: (FontSize: 18, RenderBold: true, TextColor: #9E9E9E)),
-    Hovered: (Background: #3b4552(0.0), LabelStyle: (FontSize: 18, RenderBold: true, TextColor: #D6D6D6)),
-    Pressed: (Background: #1b2532(0.0), LabelStyle: (FontSize: 18, RenderBold: true, TextColor: #e8ce79))
-);
+@SubHeader = Group {
+  Label {
+    Text: @Title;
+    Padding: (Left: 10);
+    Style: (...@DefaultLabelStyle, RenderBold: true, TextColor: #ffffff, FontSize: 18);
+  }
+  @VerticalSpacer {}
+};
 
-@ToggleButtonStyle = TextButtonStyle(
-    Default: (Background: #4a5568, LabelStyle: (FontSize: 15, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
-    Hovered: (Background: #5a6578, LabelStyle: (FontSize: 15, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
-    Pressed: (Background: #3a4558, LabelStyle: (FontSize: 15, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center))
-);
-
-
-Group {
+@DropdownWithLabel = Group {
   LayoutMode: Left;
-  Anchor: (Width: 800, Height: 500);
 
-  Group #LeftPanel {
-    LayoutMode: Top;
-    Background: #0a1119(0.95);
-    Anchor: (Width: 150, Vertical: 1);
-    Padding: (Full: 16);
+  Group #Left {
+    LayoutMode: Left;
+    Anchor: (Height: 40);
+    Background: #1f2c43;
+    Padding: (Left: 20);
+    FlexWeight: 1;
 
-    Label {
-      Text: "Settings";
-      Style: (TextColor: #495568, FontSize: 18, RenderUppercase: true, LetterSpacing: 2);
-      Anchor: (Height: 25, Horizontal: 1);
+    Label #Label {
+      Text: @Title;
+      Style: (...@DefaultLabelStyle, VerticalAlignment: Center, FontSize: 18);
     }
-
-    Group {
-      Anchor: (Height: 8);
-    }
-
-    TextButton #GeneralBtn {
-      Text: "  General";
-      Style: (@NavButtonStyle);
-      Anchor: (Height: 30);
-    }
-
-    TextButton #ConditionsBtn {
-      Text: "  Conditions";
-      Style: (@NavButtonStyle);
-      Anchor: (Height: 30);
-    }
-
-    TextButton #TimersBtn {
-      Text: "  Timers";
-      Visible: false;
-      Style: (@NavButtonStyle);
-      Anchor: (Height: 30);
-    }
-
   }
 
-  Group #RightPanel {
-    LayoutMode: Top;
-    Background: #141c26(0.98);
-    Anchor: (Vertical: 1);
+  Group #Separator {
+    Anchor: (Width: 5);
+  }
+
+  $C.@DropdownBox #Dropdown {
+    Anchor: (Width: 205, Height: 40);
+  }
+};
+
+@SliderWithLabel = Group {
+  LayoutMode: Left;
+  Anchor: (Height: 40);
+  Background: #1f2c43;
+  Padding: (Left: 20, Right: 8);
+
+
+  Label #Label {
     FlexWeight: 1;
-    Padding: (Full: 20);
+    Text: @Title;
+    Style: (...@DefaultLabelStyle, VerticalAlignment: Center, FontSize: 18);
+  }
 
-    Label #Title {
-      Text: "General Settings";
-      Style: (TextColor: #ffffff, FontSize: 26, RenderBold: true);
-      Anchor: (Height: 40);
+  Slider #Slider {
+    Anchor: (Height: 5);
+    Padding: (Left: 50, Right: 10);
+    FlexWeight: 1;
+    Style: @DefaultSliderStyle;
+    Min: 1;
+    Max: 100;
+    Step: 1;
+    Value: 50;
+  }
+
+  $C.@NumberField #Field {
+    Background: #000000(0.0);
+    Anchor: (Width: 30);
+    Padding: (Right: 0);
+    Value: 1;
+  }
+};
+
+@CheckBoxLabeled = Group {
+  LayoutMode: Left;
+  Anchor: (Height: 40);
+  Background: #1f2c43;
+  Padding: (Left: 20, Right: 8);
+
+  Label #Label {
+    FlexWeight: 1;
+    Text: @Title;
+    Style: (...@DefaultLabelStyle, VerticalAlignment: Center, FontSize: 18);
+  }
+
+  $C.@CheckBox #CheckBox {}
+};
+
+$C.@PageOverlay {
+  LayoutMode: Middle;
+
+  $C.@DecoratedContainer #Container {
+    LayoutMode: Top;
+    Anchor: (Width: 500, Height: 700);
+
+    #Title {
+      $C.@Title {
+        @Text = "DynaHUD";
+      }
     }
 
-    Group {
+    #Content {
       LayoutMode: Top;
-      Background: #2b3542;
-      Anchor: (Height: 1);
-    }
-
-    Group {
-      LayoutMode: Top;
-      Anchor: (Height: 16);
-    }
-
-    Label #SubContext {
-      Text: "Enable/Disable mod functionalities:";
-      Style: (TextColor: #6e7da1, FontSize: 18);
-    }
-
-    Group {
-      LayoutMode: Top;
-      Anchor: (Height: 8);
-    }
-
-    Group #GeneralContent {
-      Visible: true;
-      FlexWeight: 1;
-      LayoutMode: TopScrolling;
+      Anchor: (Top: 0);
+      Padding: (Left: 17, Right: 17, Top: 10, Bottom: 17);
       ScrollbarStyle: $C.@DefaultScrollbarStyle;
 
-      Group {
+      @DropdownWithLabel #SelectPreset {
+        @Title = "Preset";
+      }
+      @VerticalSpacer {}
+      $C.@ContentSeparator {}
+      @VerticalSpacer {}
+      @VerticalSpacer {}
+
+      Group #StatusBar {
         LayoutMode: Top;
-        FlexWeight: 1;
 
-        $C.@CheckBoxWithLabel #HealthBarState {
-          @Text = "Health Bar";
-          @Checked = true;
-          @DefaultLabelStyle = (FontSize: 18, RenderBold: true, TextColor: #96a9be, VerticalAlignment: Center);
-          Padding: (Bottom: 5);
+        @SubHeader {
+          @Title = "Status Bar";
         }
 
-        $C.@CheckBoxWithLabel #StaminaBarState {
-          @Text = "Stamina Bar";
-          @Checked = true;
-          @DefaultLabelStyle = (FontSize: 18, RenderBold: true, TextColor: #96a9be, VerticalAlignment: Center);
-          Padding: (Bottom: 5);
+        @DropdownWithLabel #SelectStatusBar {
+          @Title = "Trigger";
+        }
+        @VerticalSpacer {}
+
+        @SliderWithLabel #SliderHealthThreshold {
+          @Title = "Health Threshold";
+        }
+        @VerticalSpacer {}
+
+        @SliderWithLabel #SliderStaminaThreshold {
+          @Title = "Stamina Threshold";
+        }
+        @VerticalSpacer {}
+
+        @SliderWithLabel #SliderManaThreshold {
+          @Title = "Mana Threshold";
+        }
+        @VerticalSpacer {}
+        @VerticalSpacer {}
+        $C.@ContentSeparator {}
+      }
+
+      Group #Hotbar {
+        LayoutMode: Top;
+
+        @VerticalSpacer {}
+        @VerticalSpacer {}
+        @SubHeader {
+          @Title = "Hotbar";
         }
 
-        $C.@CheckBoxWithLabel #ManaBarState {
-          @Text = "Mana Bar";
-          @Checked = true;
-          @DefaultLabelStyle = (FontSize: 18, RenderBold: true, TextColor: #96a9be, VerticalAlignment: Center);
-          Padding: (Bottom: 5);
+        @DropdownWithLabel #SelectHotbar {
+          @Title = "Trigger";
+        }
+        @VerticalSpacer {}
+        @VerticalSpacer {}
+        $C.@ContentSeparator {}
+      }
+
+      Group #Reticle {
+        LayoutMode: Top;
+
+        @VerticalSpacer {}
+        @VerticalSpacer {}
+        @SubHeader {
+          @Title = "Reticle";
         }
 
-        $C.@CheckBoxWithLabel #StatusIconsState {
-          @Text = "Status Icons";
-          @Checked = false;
-          @DefaultLabelStyle = (FontSize: 18, RenderBold: true, TextColor: #96a9be, VerticalAlignment: Center);
-          Visible: false;
-          Padding: (Bottom: 5);
+        @DropdownWithLabel #SelectReticle {
+          @Title = "Trigger";
+        }
+        @VerticalSpacer {}
+        @VerticalSpacer {}
+        $C.@ContentSeparator {}
+      }
+
+      Group #Misc {
+        LayoutMode: Top;
+
+        @VerticalSpacer {}
+        @VerticalSpacer {}
+        @SubHeader {
+          @Title = "Misc";
         }
 
-        $C.@CheckBoxWithLabel #HotbarState {
-          @Text = "Hotbar";
-          @Checked = true;
-          @DefaultLabelStyle = (FontSize: 18, RenderBold: true, TextColor: #96a9be, VerticalAlignment: Center);
-          Padding: (Bottom: 5);
+        @CheckBoxLabeled #CheckBoxCompass {
+          @Title = "Hide Compass";
         }
+        @VerticalSpacer {}
 
-        $C.@CheckBoxWithLabel #ReticleState {
-          @Text = "Reticle";
-          @Checked = true;
-          @DefaultLabelStyle = (FontSize: 18, RenderBold: true, TextColor: #96a9be, VerticalAlignment: Center);
-          Padding: (Bottom: 5);
+        @CheckBoxLabeled #CheckBoxAmmo {
+          @Title = "Hide Ammo";
         }
+        @VerticalSpacer {}
 
-        $C.@CheckBoxWithLabel #CompassState {
-          @Text = "Compass";
-          @Checked = true;
-          @DefaultLabelStyle = (FontSize: 18, RenderBold: true, TextColor: #96a9be, VerticalAlignment: Center);
-          Padding: (Bottom: 5);
-        }
-
-        $C.@CheckBoxWithLabel #AmmoIndicatorState {
-          @Text = "Ammo Indicator";
-          @Checked = true;
-          @DefaultLabelStyle = (FontSize: 18, RenderBold: true, TextColor: #96a9be, VerticalAlignment: Center);
-          Padding: (Bottom: 5);
-        }
-
-        $C.@CheckBoxWithLabel #InputBindingsState {
-          @Text = "Input Bindings";
-          @Checked = true;
-          @DefaultLabelStyle = (FontSize: 18, RenderBold: true, TextColor: #96a9be, VerticalAlignment: Center);
-          Padding: (Bottom: 5);
+        @CheckBoxLabeled #CheckBoxInputBindings {
+          @Title = "Hide InputBindings";
         }
       }
     }
 
-    Group #ConditionsContent {
-      Visible: false;
-      FlexWeight: 1;
-      LayoutMode: TopScrolling;
-      ScrollbarStyle: $C.@DefaultScrollbarStyle;
-
-      Group {
-        LayoutMode: Left;
-        FlexWeight: 1;
-        Padding: (Bottom: 5);
-
-        Label {
-          Text: "Health Threshold";
-          Style: (FontSize: 18, TextColor: #96a9be, RenderBold: true, VerticalAlignment: Center);
-          Anchor: (Width: 250);
-        }
-
-        $C.@NumberField #HealthThresholdField {
-          Anchor: (Height: 30, Width: 50);
-        }
-
-      }
-
-      Group {
-        LayoutMode: Left;
-        FlexWeight: 1;
-        Padding: (Bottom: 5);
-
-        Label {
-          Text: "Stamina Threshold";
-          Style: (FontSize: 18, TextColor: #96a9be, RenderBold: true, VerticalAlignment: Center);
-          Anchor: (Width: 250);
-        }
-
-        $C.@NumberField #StaminaThresholdField {
-          Anchor: (Height: 30, Width: 50);
-        }
-
-      }
-
-      Group {
-        LayoutMode: Left;
-        FlexWeight: 1;
-        Padding: (Bottom: 5);
-
-        Label {
-          Text: "Mana Threshold";
-          Style: (FontSize: 18, TextColor: #96a9be, RenderBold: true, VerticalAlignment: Center);
-          Anchor: (Width: 250);
-        }
-
-        $C.@NumberField #ManaThresholdField {
-          Anchor: (Height: 30, Width: 50);
-        }
-
-      }
-
-    }
-
-    Group #TimersContent {
-      Visible: false;
-      FlexWeight: 1;
-      LayoutMode: TopScrolling;
-      ScrollbarStyle: $C.@DefaultScrollbarStyle;
-
-      Label {
-        Text: "TIMERS CONTENT";
-        Style: (TextColor: #ffffff, FontSize: 15);
-      }
+    #ContainerDecorationBottom {
+        Visible: false;
     }
 
     Group {
-      LayoutMode: Top;
-      Anchor: (Height: 4);
-    }
+      LayoutMode: CenterMiddle;
+      FlexWeight: 1;
 
-    Group {
-      LayoutMode: Right;
-      Anchor: (Height: 40);
-
-      TextButton #CloseBtn {
-        Text: "CLOSE";
-        Style: (@CloseButtonStyle);
-        Anchor: (Width: 100, Height: 36);
+      @VerticalSpacer {}
+      $C.@BackButton #CloseButton {
+        Anchor: (Left: 50, Bottom: -5, Width: 110, Height: 27);
       }
     }
   }
 }
+

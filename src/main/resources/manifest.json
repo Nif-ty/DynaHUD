@@ -1,14 +1,16 @@
 {
-  "Group": "co.headpats",
+  "Group": "com.niftymods",
   "Name": "DynaHUD",
-  "Version": "1.2.2",
-  "Description": "A simple automatic HUD hider for immersive gameplay.",
+  "Version": "1.3.0",
+  "Description": "A plugin that handles dynamic HUD visibility for immersive gameplay.",
   "Authors": [
     {
       "Name": "Niftly"
     }
   ],
+  "Website": "https://www.curseforge.com/hytale/mods/dynahud",
+  "Dependencies": {},
   "OptionalDependencies": {},
-  "Main": "co.headpats.plugin.DynaHudPlugin",
+  "Main": "com.niftymods.plugin.DynaHudPlugin",
   "IncludesAssetPack": true
 }
