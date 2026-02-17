@@ -10,6 +10,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.Config;
 import com.niftymods.plugin.config.ServerConfig;
 import com.niftymods.plugin.events.DynaHudSetupEvent;
+import com.niftymods.plugin.systems.CombatDamageEventSystem;
 import com.niftymods.plugin.systems.DynaHudSystem;
 
 import javax.annotation.Nonnull;
@@ -39,23 +40,14 @@ public class DynaHudPlugin extends JavaPlugin {
 
         // Register Systems
         this.getEntityStoreRegistry().registerSystem(new DynaHudSystem());
-
+        this.getEntityStoreRegistry().registerSystem(new CombatDamageEventSystem());
 
         // Register Commands
         this.getCommandRegistry().registerCommand(new DynaHudCommand());
 
-        /*
-        this.getEntityStoreRegistry().registerSystem(new DynaHudStartSystem());
-        this.settingsDataComponent = this.getEntityStoreRegistry().registerComponent(
-                SettingsData.class, "SettingsDataComponent", SettingsData.CODEC);
-        this.delayTimeComponent = this.getEntityStoreRegistry().registerComponent(
-                DelayTimeComponent.class, DelayTimeComponent::new);
-        this.getEntityStoreRegistry().registerSystem(new HudVisibilitySystem());
-        this.getCommandRegistry().registerCommand(new DynaHudCommand());
-         */
     }
 
-    public static DynaHudPlugin getInstance() {
+    public static DynaHudPlugin get() {
         return instance;
     }
 

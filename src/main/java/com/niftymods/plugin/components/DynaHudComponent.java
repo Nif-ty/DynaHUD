@@ -1,8 +1,9 @@
 package com.niftymods.plugin.components;
 
+import com.hypixel.hytale.component.ComponentType;
+import com.niftymods.plugin.DynaHudPlugin;
 import com.niftymods.plugin.config.PlayerConfig;
 import com.niftymods.plugin.utils.VisibilityDelayTime;
-import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -10,6 +11,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class DynaHudComponent implements Component<EntityStore> {
 
     private PlayerConfig playerConfig;
+    private final VisibilityDelayTime OnDamageDelayTime;
     private final VisibilityDelayTime healthDelayTime;
     private final VisibilityDelayTime staminaDelayTime;
     private final VisibilityDelayTime manaDelayTime;
@@ -17,11 +19,9 @@ public class DynaHudComponent implements Component<EntityStore> {
     private final VisibilityDelayTime ammoDelayTime;
     private byte activeHotbarSlot;
 
-    public static final BuilderCodec<DynaHudComponent> CODEC = BuilderCodec.builder(
-            DynaHudComponent.class, DynaHudComponent::new).build();
-
     public DynaHudComponent() {
         this.activeHotbarSlot = 0;
+        this.OnDamageDelayTime = new VisibilityDelayTime();
         this.healthDelayTime = new VisibilityDelayTime();
         this.staminaDelayTime = new VisibilityDelayTime();
         this.manaDelayTime = new VisibilityDelayTime();
@@ -31,6 +31,7 @@ public class DynaHudComponent implements Component<EntityStore> {
 
     public DynaHudComponent(DynaHudComponent other) {
         this.playerConfig = other.playerConfig;
+        this.OnDamageDelayTime = other.OnDamageDelayTime;
         this.activeHotbarSlot = other.activeHotbarSlot;
         this.healthDelayTime = other.healthDelayTime;
         this.staminaDelayTime = other.staminaDelayTime;
@@ -45,6 +46,10 @@ public class DynaHudComponent implements Component<EntityStore> {
         return new DynaHudComponent(this);
     }
 
+    public static ComponentType<EntityStore, DynaHudComponent> getComponentType() {
+        return DynaHudPlugin.get().getDynaHudComponentType();
+    }
+
     public PlayerConfig getPlayerConfig() { return playerConfig; }
 
     public void setPlayerConfig(PlayerConfig playerConfig) { this.playerConfig = playerConfig; }
@@ -57,19 +62,15 @@ public class DynaHudComponent implements Component<EntityStore> {
         return activeHotbarSlot;
     }
 
+    public VisibilityDelayTime getOnDamageDelayTime() { return OnDamageDelayTime; }
+
     public VisibilityDelayTime getHealthDelayTime() { return healthDelayTime; }
 
-    public VisibilityDelayTime getStaminaDelayTime() {
-        return staminaDelayTime;
-    }
+    public VisibilityDelayTime getStaminaDelayTime() { return staminaDelayTime; }
 
-    public VisibilityDelayTime getManaDelayTime() {
-        return manaDelayTime;
-    }
+    public VisibilityDelayTime getManaDelayTime() { return manaDelayTime; }
 
-    public VisibilityDelayTime getHotbarDelayTime() {
-        return hotbarDelayTime;
-    }
+    public VisibilityDelayTime getHotbarDelayTime() { return hotbarDelayTime; }
 
     public VisibilityDelayTime getAmmoDelayTime() { return this.ammoDelayTime; }
 

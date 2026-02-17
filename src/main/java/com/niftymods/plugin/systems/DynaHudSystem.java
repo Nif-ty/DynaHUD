@@ -1,6 +1,7 @@
 package com.niftymods.plugin.systems;
 
 import com.niftymods.plugin.DynaHudPlugin;
+import com.niftymods.plugin.components.DynaHudComponent;
 import com.niftymods.plugin.utils.DynaHudManager;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
@@ -38,7 +39,7 @@ public class DynaHudSystem extends EntityTickingSystem<EntityStore> {
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return DynaHudPlugin.getInstance().getDynaHudComponentType();
+        return DynaHudComponent.getComponentType();
     }
 
 }

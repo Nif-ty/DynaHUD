@@ -18,13 +18,17 @@ public class PlayerConfig {
     private String playerId;
     private String preset = "Default";
     private String statusBarTrigger = "Both";
+    private float[] statusBarDelay = new float[]{1.5f, 30.0f};
     private float healthThreshold = 30.0f;
     private float staminaThreshold = 20.0f;
     private float manaThreshold = 20.0f;
     private String hotbarTrigger = "Both";
+    private float[] hotbarDelay = new float[]{5.0f, 30.0f};
     private String reticleTrigger = "Disable";
+    private float reticleDelay = 1.5f;
+    private String ammoTrigger = "Reload";
+    private float ammoDelay = 1.5f;
     private boolean hideCompass = true;
-    private boolean hideAmmo = true;
     private boolean hideInputBindings = true;
 
     public PlayerConfig() {}
@@ -34,7 +38,7 @@ public class PlayerConfig {
     }
 
     public static PlayerConfig getFromPlayerId(String playerId) {
-        DynaHudPlugin dynaHudPlugin = DynaHudPlugin.getInstance();
+        DynaHudPlugin dynaHudPlugin = DynaHudPlugin.get();
         Path configPath = dynaHudPlugin.getDataDirectory().resolve("players/" + playerId + ".json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         PlayerConfig playerConfig;
@@ -65,13 +69,13 @@ public class PlayerConfig {
     }
 
     public static boolean hasConfigFile(String playerId) {
-        DynaHudPlugin dynaHudPlugin = DynaHudPlugin.getInstance();
+        DynaHudPlugin dynaHudPlugin = DynaHudPlugin.get();
         Path configPath = dynaHudPlugin.getDataDirectory().resolve("players/" + playerId + ".json");
         return configPath.toFile().exists();
     }
 
     public void save() {
-        DynaHudPlugin dynaHudPlugin = DynaHudPlugin.getInstance();
+        DynaHudPlugin dynaHudPlugin = DynaHudPlugin.get();
         Path configPath = dynaHudPlugin.getDataDirectory().resolve("players/" + playerId + ".json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -92,27 +96,25 @@ public class PlayerConfig {
         PlayerConfig other = new PlayerConfig(this.playerId);
         this.preset = other.preset;
         this.statusBarTrigger = other.statusBarTrigger;
+        this.statusBarDelay = other.statusBarDelay;
         this.healthThreshold = other.healthThreshold;
         this.staminaThreshold = other.staminaThreshold;
         this.manaThreshold = other.manaThreshold;
         this.hotbarTrigger = other.hotbarTrigger;
+        this.hotbarDelay = other.hotbarDelay;
         this.reticleTrigger = other.reticleTrigger;
+        this.reticleDelay = other.reticleDelay;
+        this.ammoTrigger = other.ammoTrigger;
+        this.ammoDelay = other.ammoDelay;
         this.hideCompass = other.hideCompass;
-        this.hideAmmo = other.hideAmmo;
         this.hideInputBindings = other.hideInputBindings;
     }
 
-    public String getVersion() {
-        return version;
-    }
+    public String getVersion() { return version; }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+    public void setVersion(String version) { this.version = version; }
 
-    public String getPlayerId() {
-        return playerId;
-    }
+    public String getPlayerId() { return playerId; }
 
     public void setPlayerId(String playerId) { this.playerId = playerId; }
 
@@ -127,6 +129,10 @@ public class PlayerConfig {
     public void setStatusBarTrigger(String statusBarTrigger) {
         this.statusBarTrigger = statusBarTrigger;
     }
+
+    public float[] getStatusBarDelay() { return statusBarDelay; }
+
+    public void setStatusBarDelay(int index, float delay) { this.statusBarDelay[index] = delay; }
 
     public float getHealthThreshold() {
         return healthThreshold;
@@ -160,6 +166,10 @@ public class PlayerConfig {
         this.hotbarTrigger = hotbarTrigger;
     }
 
+    public float[] getHotbarDelay() { return hotbarDelay; }
+
+    public void setHotbarDelay(int index, float delay) { this.hotbarDelay[index] = delay;}
+
     public String getReticleTrigger() {
         return reticleTrigger;
     }
@@ -168,20 +178,24 @@ public class PlayerConfig {
         this.reticleTrigger = reticleTrigger;
     }
 
+    public float getReticleDelay() { return reticleDelay; }
+
+    public void setReticleDelay(float reticleDelay) { this.reticleDelay = reticleDelay; }
+
+    public String getAmmoTrigger() { return ammoTrigger; }
+
+    public void setAmmoTrigger(String ammoTrigger) { this.ammoTrigger = ammoTrigger; }
+
+    public float getAmmoDelay() { return ammoDelay; }
+
+    public void setAmmoDelay(float ammoDelay) { this.ammoDelay = ammoDelay; }
+
     public boolean isHideCompass() {
         return hideCompass;
     }
 
     public void setHideCompass(boolean hideCompass) {
         this.hideCompass = hideCompass;
-    }
-
-    public boolean isHideAmmo() {
-        return hideAmmo;
-    }
-
-    public void setHideAmmo(boolean hideAmmo) {
-        this.hideAmmo = hideAmmo;
     }
 
     public boolean isHideInputBindings() {

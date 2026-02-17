@@ -22,12 +22,10 @@ public class DynaHudManager {
     private static final ComponentType<EntityStore, Player> PLAYER_COMPONENT_TYPE = Player.getComponentType();
     @Nonnull
     private static final ComponentType<EntityStore, EntityStatMap> ENTITY_STAT_MAP_COMPONENT_TYPE = EntityStatMap.getComponentType();
-    private final ComponentType<EntityStore, DynaHudComponent> DYNAHUD_COMPONENT_TYPE = DynaHudPlugin.getInstance().getDynaHudComponentType();
+    private final ComponentType<EntityStore, DynaHudComponent> COMPONENT_TYPE = DynaHudComponent.getComponentType();
 
     private float deltaTime;
-    private Store<EntityStore> store;
     private Player player;
-    private Ref<EntityStore> ref;
     private PlayerRef playerRef;
     private EntityStatMap statMap;
     private HudManager hudManager;
@@ -41,15 +39,14 @@ public class DynaHudManager {
             @NonNullDecl Store<EntityStore> store
     ) {
         this.deltaTime = deltaTime;
-        this.store = store;
         this.player = archetypeChunk.getComponent(index, PLAYER_COMPONENT_TYPE);
         assert player != null;
-        this.ref = player.getReference();
+        Ref<EntityStore> ref = player.getReference();
         assert ref != null;
         this.playerRef = store.getComponent(ref, PlayerRef.getComponentType());
         this.statMap = archetypeChunk.getComponent(index, ENTITY_STAT_MAP_COMPONENT_TYPE);
         this.hudManager = player.getHudManager();
-        this.dynaHudComponent = store.getComponent(ref, DYNAHUD_COMPONENT_TYPE);
+        this.dynaHudComponent = store.getComponent(ref, COMPONENT_TYPE);
         assert dynaHudComponent != null;
         this.config = dynaHudComponent.getPlayerConfig();
     }
@@ -68,8 +65,8 @@ public class DynaHudManager {
         VisibilityDelayTime visibilityDelay = dynaHudComponent.getHealthDelayTime();
         float threshold = (config.getHealthThreshold() * 0.01f) * stat.getMax();
 
-        boolean statBelowLimit = stat.get() < threshold; //Modify this to get config stat limit
-        float hideDelayTime = 1.5f; // Modify this to get config hide delay time
+        boolean statBelowLimit = stat.get() < threshold;
+        float hideDelayTime = config.getStatusBarDelay()[0]; // Threshold hide delay
 
         if (statBelowLimit) {
             visibilityDelay.resetHideTime();
@@ -99,7 +96,7 @@ public class DynaHudManager {
         float threshold = (config.getStaminaThreshold() * 0.01f) * stat.getMax();
 
         boolean statBelowLimit = stat.get() < threshold;
-        float hideDelayTime = 1.5f;
+        float hideDelayTime = config.getStatusBarDelay()[0]; // Threshold hide delay
 
         if (statBelowLimit) {
             visibilityDelay.resetHideTime();
@@ -126,27 +123,28 @@ public class DynaHudManager {
         EntityStatValue stat = statMap.get(DefaultEntityStatTypes.getMana());
         assert stat != null;
 
-        VisibilityDelayTime manaVisibilityDelay = dynaHudComponent.getManaDelayTime();
+        VisibilityDelayTime visibilityDelay = dynaHudComponent.getManaDelayTime();
         float threshold = (config.getManaThreshold() * 0.01f) * stat.getMax();
 
         boolean statBelowLimit = stat.get() < threshold;
-        float hideDelayTime = 1.5f;
+        float hideDelayTime = config.getStatusBarDelay()[0]; // Threshold hide delay
+
         if (statBelowLimit) {
-            manaVisibilityDelay.resetHideTime();
+            visibilityDelay.resetHideTime();
             if (!hasHud)
                 hudManager.showHudComponents(playerRef, HudComponent.Mana);
         } else if (hasHud) {
-            manaVisibilityDelay.incrementHideTime(deltaTime);
-            if (manaVisibilityDelay.getHideTime() >= hideDelayTime) {
+            visibilityDelay.incrementHideTime(deltaTime);
+            if (visibilityDelay.getHideTime() >= hideDelayTime) {
                 hudManager.hideHudComponents(playerRef, HudComponent.Mana);
-                manaVisibilityDelay.resetHideTime();
+                visibilityDelay.resetHideTime();
             }
         }
     }
 
     public void monitorAmmo() {
         boolean hasHud = hudManager.getVisibleHudComponents().contains(HudComponent.AmmoIndicator);
-        if (!config.isHideAmmo()) {
+        if (config.getAmmoTrigger().equalsIgnoreCase("Disable")) {
             if (!hasHud) {
                 hudManager.showHudComponents(playerRef, HudComponent.AmmoIndicator);
             }
@@ -156,20 +154,21 @@ public class DynaHudManager {
         EntityStatValue stat = statMap.get(DefaultEntityStatTypes.getAmmo());
         assert stat != null;
 
-        VisibilityDelayTime ammoVisibilityDelay = dynaHudComponent.getAmmoDelayTime();
+        VisibilityDelayTime visibilityDelay = dynaHudComponent.getAmmoDelayTime();
         float threshold = stat.getMax(); // Can be added to settings
 
         boolean statBelowLimit = stat.get() < threshold;
-        float hideDelayTime = 1.5f;
+        float hideDelayTime = config.getAmmoDelay(); // Reload hide delay
+
         if (statBelowLimit) {
-            ammoVisibilityDelay.resetHideTime();
+            visibilityDelay.resetHideTime();
             if (!hasHud)
                 hudManager.showHudComponents(playerRef, HudComponent.AmmoIndicator);
         } else if (hasHud) {
-            ammoVisibilityDelay.incrementHideTime(deltaTime);
-            if (ammoVisibilityDelay.getHideTime() >= hideDelayTime) {
+            visibilityDelay.incrementHideTime(deltaTime);
+            if (visibilityDelay.getHideTime() >= hideDelayTime) {
                 hudManager.hideHudComponents(playerRef, HudComponent.AmmoIndicator);
-                ammoVisibilityDelay.resetHideTime();
+                visibilityDelay.resetHideTime();
             }
         }
     }
@@ -183,22 +182,21 @@ public class DynaHudManager {
             return;
         }
 
-        VisibilityDelayTime hotbarVisibilityDelayTime = dynaHudComponent.getHotbarDelayTime();
+        VisibilityDelayTime visibilityDelay = dynaHudComponent.getHotbarDelayTime();
         Inventory inventory = player.getInventory();
 
         boolean hotbarIndexChanged = inventory.getActiveHotbarSlot() != dynaHudComponent.getActiveHotbarSlot();
-
-        float hideDelayTime = 1.5f;
+        float hideDelayTime = config.getHotbarDelay()[0]; // Change hide delay
 
         if (hotbarIndexChanged) {
-            hotbarVisibilityDelayTime.resetHideTime();
+            visibilityDelay.resetHideTime();
             if (!hasHud)
                 hudManager.showHudComponents(playerRef, HudComponent.Hotbar);
         } else if (hasHud) {
-            hotbarVisibilityDelayTime.incrementHideTime(deltaTime);
-            if (hotbarVisibilityDelayTime.getHideTime() >= hideDelayTime) {
+            visibilityDelay.incrementHideTime(deltaTime);
+            if (visibilityDelay.getHideTime() >= hideDelayTime) {
                 hudManager.hideHudComponents(playerRef, HudComponent.Hotbar);
-                hotbarVisibilityDelayTime.resetHideTime();
+                visibilityDelay.resetHideTime();
             }
         }
         dynaHudComponent.setActiveHotbarSlot(inventory.getActiveHotbarSlot());

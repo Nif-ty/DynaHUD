@@ -18,7 +18,7 @@ import com.niftymods.plugin.config.ServerConfig;
 public class DynaHudSetupEvent {
 
     public static void onPlayerReady(PlayerReadyEvent event) {
-        ComponentType<EntityStore, DynaHudComponent> dynaHudComponentType = DynaHudPlugin.getInstance().getDynaHudComponentType();
+        ComponentType<EntityStore, DynaHudComponent> COMPONENT_TYPE = DynaHudComponent.getComponentType();
         Ref<EntityStore> ref = event.getPlayerRef();
         Store<EntityStore> store = ref.getStore();
         PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
@@ -27,7 +27,7 @@ public class DynaHudSetupEvent {
         // Create player config file
         if (playerRef != null && !PlayerConfig.hasConfigFile(playerRef.getUuid().toString())) {
             PlayerConfig playerConfig = PlayerConfig.getFromPlayerId(playerRef.getUuid().toString());
-            Config<ServerConfig> config = DynaHudPlugin.getInstance().getServerConfig();
+            Config<ServerConfig> config = DynaHudPlugin.get().getServerConfig();
             ServerConfig serverConfig = config.get();
 
             if (serverConfig.isDisabledByDefault()) {
@@ -35,14 +35,14 @@ public class DynaHudSetupEvent {
                 playerConfig.setStatusBarTrigger("Disable");
                 playerConfig.setHotbarTrigger("Disable");
                 playerConfig.setReticleTrigger("Disable");
+                playerConfig.setAmmoTrigger("Disable");
                 playerConfig.setHideCompass(false);
-                playerConfig.setHideAmmo(false);
                 playerConfig.setHideInputBindings(false);
                 playerConfig.save();
             }
         }
 
-        boolean hasDynaHudComponent = store.getComponent(ref, dynaHudComponentType) != null;
+        boolean hasDynaHudComponent = store.getComponent(ref, COMPONENT_TYPE) != null;
         if (!hasDynaHudComponent) {
             DynaHudComponent dynaHudComponent = new DynaHudComponent();
             if (playerRef != null) {
@@ -57,7 +57,7 @@ public class DynaHudSetupEvent {
                     hudManager.hideHudComponents(playerRef, HudComponent.InputBindings);
             }
 
-            store.addComponent(ref, dynaHudComponentType, dynaHudComponent);
+            store.addComponent(ref, COMPONENT_TYPE, dynaHudComponent);
         }
     }
 

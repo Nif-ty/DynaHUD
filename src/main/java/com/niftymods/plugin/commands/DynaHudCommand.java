@@ -24,7 +24,7 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 public class DynaHudCommand extends AbstractPlayerCommand {
 
-    private final ComponentType<EntityStore, DynaHudComponent> dynaHudComponentType = DynaHudPlugin.getInstance().getDynaHudComponentType();
+    private final ComponentType<EntityStore, DynaHudComponent> COMPONENT_TYPE = DynaHudComponent.getComponentType();
     private final OptionalArg<Boolean> disabledByDefaultArg;
 
     public DynaHudCommand() {
@@ -41,8 +41,8 @@ public class DynaHudCommand extends AbstractPlayerCommand {
             @NonNullDecl PlayerRef playerRef,
             @NonNullDecl World world
     ) {
-        DynaHudPlugin dynaHudPlugin = DynaHudPlugin.getInstance();
-        DynaHudComponent dynaHudComponent = store.getComponent(ref, dynaHudComponentType);
+        DynaHudPlugin dynaHudPlugin = DynaHudPlugin.get();
+        DynaHudComponent dynaHudComponent = store.getComponent(ref, COMPONENT_TYPE);
         assert dynaHudComponent != null;
         Player player = store.getComponent(ref, Player.getComponentType());
         assert player != null;
