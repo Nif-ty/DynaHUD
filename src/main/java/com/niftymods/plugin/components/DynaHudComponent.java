@@ -3,7 +3,7 @@ package com.niftymods.plugin.components;
 import com.hypixel.hytale.component.ComponentType;
 import com.niftymods.plugin.DynaHudPlugin;
 import com.niftymods.plugin.config.PlayerConfig;
-import com.niftymods.plugin.utils.VisibilityDelayTime;
+import com.niftymods.plugin.utils.TickTimer;
 import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -11,33 +11,44 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class DynaHudComponent implements Component<EntityStore> {
 
     private PlayerConfig playerConfig;
-    private final VisibilityDelayTime OnDamageDelayTime;
-    private final VisibilityDelayTime healthDelayTime;
-    private final VisibilityDelayTime staminaDelayTime;
-    private final VisibilityDelayTime manaDelayTime;
-    private final VisibilityDelayTime hotbarDelayTime;
-    private final VisibilityDelayTime ammoDelayTime;
-    private byte activeHotbarSlot;
+
+    // HudCondition
+    private final TickTimer healthBarTickTimer;
+    private final TickTimer staminaBarTickTimer;
+    private final TickTimer manaBarTickTimer;
+    private final TickTimer ammoBarTickTimer;
+    private final TickTimer hotbarTickTimer;
+    private byte activeSlot;
+
+    // CombatEvent
+    private final TickTimer statusBarCombatTickTimer;
+    private final TickTimer hotbarCombatTickTimer;
+    private final TickTimer reticleCombatTickTimer;
+
 
     public DynaHudComponent() {
-        this.activeHotbarSlot = 0;
-        this.OnDamageDelayTime = new VisibilityDelayTime();
-        this.healthDelayTime = new VisibilityDelayTime();
-        this.staminaDelayTime = new VisibilityDelayTime();
-        this.manaDelayTime = new VisibilityDelayTime();
-        this.hotbarDelayTime = new VisibilityDelayTime();
-        this.ammoDelayTime = new VisibilityDelayTime();
+        this.healthBarTickTimer = new TickTimer(0);
+        this.staminaBarTickTimer = new TickTimer(0);
+        this.manaBarTickTimer = new TickTimer(0);
+        this.ammoBarTickTimer = new TickTimer(0);
+        this.hotbarTickTimer = new TickTimer(0);
+        this.statusBarCombatTickTimer = new TickTimer(0);
+        this.hotbarCombatTickTimer = new TickTimer(0);
+        this.reticleCombatTickTimer = new TickTimer(0);
+        activeSlot = 0;
     }
 
     public DynaHudComponent(DynaHudComponent other) {
         this.playerConfig = other.playerConfig;
-        this.OnDamageDelayTime = other.OnDamageDelayTime;
-        this.activeHotbarSlot = other.activeHotbarSlot;
-        this.healthDelayTime = other.healthDelayTime;
-        this.staminaDelayTime = other.staminaDelayTime;
-        this.manaDelayTime = other.manaDelayTime;
-        this.hotbarDelayTime = other.hotbarDelayTime;
-        this.ammoDelayTime = other.ammoDelayTime;
+        this.healthBarTickTimer = other.healthBarTickTimer;
+        this.staminaBarTickTimer = other.staminaBarTickTimer;
+        this.manaBarTickTimer = other.manaBarTickTimer;
+        this.ammoBarTickTimer = other.ammoBarTickTimer;
+        this.hotbarTickTimer = other.hotbarTickTimer;
+        this.statusBarCombatTickTimer = other.statusBarCombatTickTimer;
+        this.hotbarCombatTickTimer = other.hotbarCombatTickTimer;
+        this.reticleCombatTickTimer = other.reticleCombatTickTimer;
+        activeSlot = 0;
     }
 
     @NullableDecl
@@ -50,28 +61,71 @@ public class DynaHudComponent implements Component<EntityStore> {
         return DynaHudPlugin.get().getDynaHudComponentType();
     }
 
-    public PlayerConfig getPlayerConfig() { return playerConfig; }
-
-    public void setPlayerConfig(PlayerConfig playerConfig) { this.playerConfig = playerConfig; }
-
-    public void setActiveHotbarSlot(byte hotbarIndex) {
-        this.activeHotbarSlot = hotbarIndex;
+    public PlayerConfig getPlayerConfig() {
+        return playerConfig;
     }
 
-    public byte getActiveHotbarSlot() {
-        return activeHotbarSlot;
+    public void setPlayerConfig(PlayerConfig playerConfig) {
+        this.playerConfig = playerConfig;
+        healthBarTickTimer.setDefaultTime(playerConfig.getStatusBarDelayThreshold());
+        staminaBarTickTimer.setDefaultTime(playerConfig.getStatusBarDelayThreshold());
+        manaBarTickTimer.setDefaultTime(playerConfig.getStatusBarDelayThreshold());
+        ammoBarTickTimer.setDefaultTime(playerConfig.getAmmoDelayThreshold());
+        hotbarTickTimer.setDefaultTime(playerConfig.getHotbarDelayChange());
+        statusBarCombatTickTimer.setDefaultTime(playerConfig.getStatusBarDelayCombat());
+        hotbarCombatTickTimer.setDefaultTime(playerConfig.getHotbarDelayCombat());
+        reticleCombatTickTimer.setDefaultTime(playerConfig.getReticleDelayCombat());
     }
 
-    public VisibilityDelayTime getOnDamageDelayTime() { return OnDamageDelayTime; }
+    public TickTimer getHealthBarTickTimer() {
+        return healthBarTickTimer;
+    }
 
-    public VisibilityDelayTime getHealthDelayTime() { return healthDelayTime; }
+    public TickTimer getStaminaBarTickTimer() {
+        return staminaBarTickTimer;
+    }
 
-    public VisibilityDelayTime getStaminaDelayTime() { return staminaDelayTime; }
+    public TickTimer getManaBarTickTimer() {
+        return manaBarTickTimer;
+    }
 
-    public VisibilityDelayTime getManaDelayTime() { return manaDelayTime; }
+    public TickTimer getAmmoBarTickTimer() {
+        return ammoBarTickTimer;
+    }
 
-    public VisibilityDelayTime getHotbarDelayTime() { return hotbarDelayTime; }
+    public TickTimer getHotbarTickTimer() {
+        return hotbarTickTimer;
+    }
 
-    public VisibilityDelayTime getAmmoDelayTime() { return this.ammoDelayTime; }
+    public TickTimer getStatusBarCombatTickTimer() {
+        return statusBarCombatTickTimer;
+    }
+
+    public TickTimer getHotbarCombatTickTimer() {
+        return hotbarCombatTickTimer;
+    }
+
+    public TickTimer getReticleCombatTickTimer() {
+        return reticleCombatTickTimer;
+    }
+
+    public void updateTickTimers() {
+        healthBarTickTimer.setDefaultTime(playerConfig.getStatusBarDelayThreshold());
+        staminaBarTickTimer.setDefaultTime(playerConfig.getStatusBarDelayThreshold());
+        manaBarTickTimer.setDefaultTime(playerConfig.getStatusBarDelayThreshold());
+        ammoBarTickTimer.setDefaultTime(playerConfig.getAmmoDelayThreshold());
+        hotbarTickTimer.setDefaultTime(playerConfig.getHotbarDelayChange());
+        statusBarCombatTickTimer.setDefaultTime(playerConfig.getStatusBarDelayCombat());
+        hotbarCombatTickTimer.setDefaultTime(playerConfig.getHotbarDelayCombat());
+        reticleCombatTickTimer.setDefaultTime(playerConfig.getReticleDelayCombat());
+    }
+
+    public byte getActiveSlot() {
+        return activeSlot;
+    }
+
+    public void setActiveSlot(byte activeSlot) {
+        this.activeSlot = activeSlot;
+    }
 
 }

@@ -237,6 +237,44 @@ $C.@PageOverlay {
         $C.@ContentSeparator {}
       }
 
+      Group #Ammo {
+        LayoutMode: Top;
+
+        @VerticalSpacer {}
+        @VerticalSpacer {}
+        @SubHeader {
+          @Title = "Ammo";
+        }
+
+        @DropdownWithLabel #SelectAmmo {
+          @Title = "Trigger";
+        }
+        @VerticalSpacer {}
+
+        Group #AmmoHideDelay{
+          LayoutMode: Top;
+
+          @PropertyHeader {
+            @Title = "Hide Delay";
+          }
+          $C.@ContentSeparator {}
+          $C.@ContentSeparator {}
+          @SliderWithLabel #AmmoReloadDelay {
+            @Title = "   Reload";
+            #Slider {
+              Max: 60;
+              Step: 0.1;
+            }
+            #Field {
+              Format: (MaxDecimalPlaces: 1, Step: 0.1);
+            }
+          }
+          @VerticalSpacer {}
+        }
+        @VerticalSpacer {}
+        $C.@ContentSeparator {}
+      }
+
       Group #Reticle {
         LayoutMode: Top;
 
@@ -262,44 +300,6 @@ $C.@PageOverlay {
           $C.@ContentSeparator {}
           @SliderWithLabel #ReticleCombatDelay {
             @Title = "   Combat";
-            #Slider {
-              Max: 60;
-              Step: 0.1;
-            }
-            #Field {
-              Format: (MaxDecimalPlaces: 1, Step: 0.1);
-            }
-          }
-          @VerticalSpacer {}
-        }
-        @VerticalSpacer {}
-        $C.@ContentSeparator {}
-      }
-
-      Group #Ammo {
-        LayoutMode: Top;
-
-        @VerticalSpacer {}
-        @VerticalSpacer {}
-        @SubHeader {
-          @Title = "Ammo";
-        }
-
-        @DropdownWithLabel #SelectAmmo {
-          @Title = "Trigger";
-        }
-        @VerticalSpacer {}
-
-        Group #AmmoHideDelay{
-          LayoutMode: Top;
-
-          @PropertyHeader {
-            @Title = "Hide Delay";
-          }
-          $C.@ContentSeparator {}
-          $C.@ContentSeparator {}
-          @SliderWithLabel #AmmoReloadDelay {
-            @Title = "   Reload";
             #Slider {
               Max: 60;
               Step: 0.1;

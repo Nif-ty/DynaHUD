@@ -12,5 +12,6 @@
   "Dependencies": {},
   "OptionalDependencies": {},
   "Main": "com.niftymods.plugin.DynaHudPlugin",
-  "IncludesAssetPack": true
+  "IncludesAssetPack": true,
+  "ServerVersion": "2026.02.19-1a311a592"
 }

@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.hypixel.hytale:Server:2026.02.06-aa1b071c2")
+    compileOnly("com.hypixel.hytale:Server:2026.02.19-1a311a592")
 }
 
 tasks.test {

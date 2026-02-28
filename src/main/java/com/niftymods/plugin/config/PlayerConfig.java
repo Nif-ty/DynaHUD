@@ -17,17 +17,19 @@ public class PlayerConfig {
     private String version = "1.0.0";
     private String playerId;
     private String preset = "Default";
-    private String statusBarTrigger = "Both";
-    private float[] statusBarDelay = new float[]{1.5f, 30.0f};
+    private String statusBarTrigger = "Threshold";
+    private float statusBarDelayThreshold = 1.5f;
+    private float statusBarDelayCombat = 30.0f;
     private float healthThreshold = 30.0f;
     private float staminaThreshold = 20.0f;
     private float manaThreshold = 20.0f;
-    private String hotbarTrigger = "Both";
-    private float[] hotbarDelay = new float[]{5.0f, 30.0f};
+    private String hotbarTrigger = "Change";
+    private float hotbarDelayChange = 5.0f;
+    private float hotbarDelayCombat = 30.0f;
     private String reticleTrigger = "Disable";
-    private float reticleDelay = 1.5f;
+    private float reticleDelayCombat = 30.0f;
     private String ammoTrigger = "Reload";
-    private float ammoDelay = 1.5f;
+    private float ammoDelayThreshold = 1.5f;
     private boolean hideCompass = true;
     private boolean hideInputBindings = true;
 
@@ -96,16 +98,18 @@ public class PlayerConfig {
         PlayerConfig other = new PlayerConfig(this.playerId);
         this.preset = other.preset;
         this.statusBarTrigger = other.statusBarTrigger;
-        this.statusBarDelay = other.statusBarDelay;
+        this.statusBarDelayThreshold = other.statusBarDelayThreshold;
+        this.statusBarDelayCombat = other.statusBarDelayCombat;
         this.healthThreshold = other.healthThreshold;
         this.staminaThreshold = other.staminaThreshold;
         this.manaThreshold = other.manaThreshold;
         this.hotbarTrigger = other.hotbarTrigger;
-        this.hotbarDelay = other.hotbarDelay;
+        this.hotbarDelayChange = other.hotbarDelayChange;
+        this.hotbarDelayCombat = other.hotbarDelayCombat;
         this.reticleTrigger = other.reticleTrigger;
-        this.reticleDelay = other.reticleDelay;
+        this.reticleDelayCombat = other.reticleDelayCombat;
         this.ammoTrigger = other.ammoTrigger;
-        this.ammoDelay = other.ammoDelay;
+        this.ammoDelayThreshold = other.ammoDelayThreshold;
         this.hideCompass = other.hideCompass;
         this.hideInputBindings = other.hideInputBindings;
     }
@@ -130,9 +134,21 @@ public class PlayerConfig {
         this.statusBarTrigger = statusBarTrigger;
     }
 
-    public float[] getStatusBarDelay() { return statusBarDelay; }
+    public float getStatusBarDelayThreshold() {
+        return statusBarDelayThreshold;
+    }
 
-    public void setStatusBarDelay(int index, float delay) { this.statusBarDelay[index] = delay; }
+    public void setStatusBarDelayThreshold(float statusBarDelayThreshold) {
+        this.statusBarDelayThreshold = statusBarDelayThreshold;
+    }
+
+    public float getStatusBarDelayCombat() {
+        return statusBarDelayCombat;
+    }
+
+    public void setStatusBarDelayCombat(float statusBarDelayCombat) {
+        this.statusBarDelayCombat = statusBarDelayCombat;
+    }
 
     public float getHealthThreshold() {
         return healthThreshold;
@@ -166,9 +182,21 @@ public class PlayerConfig {
         this.hotbarTrigger = hotbarTrigger;
     }
 
-    public float[] getHotbarDelay() { return hotbarDelay; }
+    public float getHotbarDelayChange() {
+        return hotbarDelayChange;
+    }
 
-    public void setHotbarDelay(int index, float delay) { this.hotbarDelay[index] = delay;}
+    public void setHotbarDelayChange(float hotbarDelayChange) {
+        this.hotbarDelayChange = hotbarDelayChange;
+    }
+
+    public float getHotbarDelayCombat() {
+        return hotbarDelayCombat;
+    }
+
+    public void setHotbarDelayCombat(float hotbarDelayCombat) {
+        this.hotbarDelayCombat = hotbarDelayCombat;
+    }
 
     public String getReticleTrigger() {
         return reticleTrigger;
@@ -178,17 +206,17 @@ public class PlayerConfig {
         this.reticleTrigger = reticleTrigger;
     }
 
-    public float getReticleDelay() { return reticleDelay; }
+    public float getReticleDelayCombat() { return reticleDelayCombat; }
 
-    public void setReticleDelay(float reticleDelay) { this.reticleDelay = reticleDelay; }
+    public void setReticleDelayCombat(float reticleDelayCombat) { this.reticleDelayCombat = reticleDelayCombat; }
 
     public String getAmmoTrigger() { return ammoTrigger; }
 
     public void setAmmoTrigger(String ammoTrigger) { this.ammoTrigger = ammoTrigger; }
 
-    public float getAmmoDelay() { return ammoDelay; }
+    public float getAmmoDelayThreshold() { return ammoDelayThreshold; }
 
-    public void setAmmoDelay(float ammoDelay) { this.ammoDelay = ammoDelay; }
+    public void setAmmoDelayThreshold(float ammoDelayThreshold) { this.ammoDelayThreshold = ammoDelayThreshold; }
 
     public boolean isHideCompass() {
         return hideCompass;

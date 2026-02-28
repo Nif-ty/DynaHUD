@@ -17,6 +17,8 @@ import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.niftymods.plugin.DynaHudPlugin;
+import com.niftymods.plugin.components.DynaHudComponent;
 import com.niftymods.plugin.config.PlayerConfig;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -132,6 +134,7 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
         // Entries - Preset
         ObjectArrayList<DropdownEntryInfo> presetEntries = new ObjectArrayList<>();
         presetEntries.add(new DropdownEntryInfo(LocalizableString.fromString("Default"), "Default"));
+        presetEntries.add(new DropdownEntryInfo(LocalizableString.fromString("Dynamic"), "Dynamic"));
         presetEntries.add(new DropdownEntryInfo(LocalizableString.fromString("Custom"), "Custom"));
         presetEntries.add(new DropdownEntryInfo(LocalizableString.fromString("Disable"), "Disable"));
         commandBuilder.set("#SelectPreset #Dropdown.Entries", presetEntries);
@@ -182,10 +185,10 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
 
         // Status Bar
         commandBuilder.set("#SelectStatusBar #Dropdown.Value", config.getStatusBarTrigger());
-        commandBuilder.set("#StatusBarThresholdDelay #Slider.Value", config.getStatusBarDelay()[0]);
-        commandBuilder.set("#StatusBarThresholdDelay #Field.Value", config.getStatusBarDelay()[0]);
-        commandBuilder.set("#StatusBarCombatDelay #Slider.Value", config.getStatusBarDelay()[1]);
-        commandBuilder.set("#StatusBarCombatDelay #Field.Value", config.getStatusBarDelay()[1]);
+        commandBuilder.set("#StatusBarThresholdDelay #Slider.Value", config.getStatusBarDelayThreshold());
+        commandBuilder.set("#StatusBarThresholdDelay #Field.Value", config.getStatusBarDelayThreshold());
+        commandBuilder.set("#StatusBarCombatDelay #Slider.Value", config.getStatusBarDelayCombat());
+        commandBuilder.set("#StatusBarCombatDelay #Field.Value", config.getStatusBarDelayCombat());
         commandBuilder.set("#SliderHealthThreshold #Slider.Value", config.getHealthThreshold());
         commandBuilder.set("#SliderHealthThreshold #Field.Value", config.getHealthThreshold());
         commandBuilder.set("#SliderStaminaThreshold #Slider.Value", config.getStaminaThreshold());
@@ -195,24 +198,65 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
 
         // Hotbar
         commandBuilder.set("#SelectHotbar #Dropdown.Value", config.getHotbarTrigger());
-        commandBuilder.set("#HotbarChangeDelay #Slider.Value", config.getHotbarDelay()[0]);
-        commandBuilder.set("#HotbarChangeDelay #Field.Value", config.getHotbarDelay()[0]);
-        commandBuilder.set("#HotbarCombatDelay #Slider.Value", config.getHotbarDelay()[1]);
-        commandBuilder.set("#HotbarCombatDelay #Field.Value", config.getHotbarDelay()[1]);
+        commandBuilder.set("#HotbarChangeDelay #Slider.Value", config.getHotbarDelayChange());
+        commandBuilder.set("#HotbarChangeDelay #Field.Value", config.getHotbarDelayChange());
+        commandBuilder.set("#HotbarCombatDelay #Slider.Value", config.getHotbarDelayCombat());
+        commandBuilder.set("#HotbarCombatDelay #Field.Value", config.getHotbarDelayCombat());
 
         // Reticle
         commandBuilder.set("#SelectReticle #Dropdown.Value", config.getReticleTrigger());
-        commandBuilder.set("#ReticleCombatDelay #Slider.Value", config.getReticleDelay());
-        commandBuilder.set("#ReticleCombatDelay #Field.Value", config.getReticleDelay());
+        commandBuilder.set("#ReticleCombatDelay #Slider.Value", config.getReticleDelayCombat());
+        commandBuilder.set("#ReticleCombatDelay #Field.Value", config.getReticleDelayCombat());
 
         // Ammo
         commandBuilder.set("#SelectAmmo #Dropdown.Value", config.getAmmoTrigger());
-        commandBuilder.set("#AmmoReloadDelay #Slider.Value", config.getAmmoDelay());
-        commandBuilder.set("#AmmoReloadDelay #Field.Value", config.getAmmoDelay());
+        commandBuilder.set("#AmmoReloadDelay #Slider.Value", config.getAmmoDelayThreshold());
+        commandBuilder.set("#AmmoReloadDelay #Field.Value", config.getAmmoDelayThreshold());
 
         // Misc
         commandBuilder.set("#CheckBoxCompass #CheckBox.Value", config.isHideCompass());
         commandBuilder.set("#CheckBoxInputBindings #CheckBox.Value", config.isHideInputBindings());
+
+        // Delay Time
+        updateDelayTime("All", commandBuilder);
+
+    }
+
+    private void updateDelayTime(String category, UICommandBuilder commandBuilder) {
+        boolean updateAll = category.equalsIgnoreCase("All");
+        if (category.equalsIgnoreCase("StatusBar") || updateAll) {
+            boolean isDisabled = config.getStatusBarTrigger().equalsIgnoreCase("Disable");
+            boolean isBothVisible = config.getStatusBarTrigger().equalsIgnoreCase("Both");
+            boolean isThresholdDelayVisible = config.getStatusBarTrigger().equalsIgnoreCase("Threshold") || isBothVisible;
+            boolean isCombatDelayVisible = config.getStatusBarTrigger().equalsIgnoreCase("Combat") || isBothVisible;
+            commandBuilder.set("#StatusBarHideDelay.Visible", !isDisabled);
+            commandBuilder.set("#StatusBarThresholdDelay.Visible", isThresholdDelayVisible);
+            commandBuilder.set("#StatusBarCombatDelay.Visible", isCombatDelayVisible);
+            if (!updateAll)
+                return;
+        }
+        if (category.equalsIgnoreCase("Hotbar") || updateAll) {
+            boolean isDisabled = config.getHotbarTrigger().equalsIgnoreCase("Disable");
+            boolean isBothVisible = config.getHotbarTrigger().equalsIgnoreCase("Both");
+            boolean isChangeDelayVisible = config.getHotbarTrigger().equalsIgnoreCase("Change") || isBothVisible;
+            boolean isCombatDelayVisible = config.getHotbarTrigger().equalsIgnoreCase("Combat") || isBothVisible;
+            commandBuilder.set("#HotbarHideDelay.Visible", !isDisabled);
+            commandBuilder.set("#HotbarChangeDelay.Visible", isChangeDelayVisible);
+            commandBuilder.set("#HotbarCombatDelay.Visible", isCombatDelayVisible);
+            if (!updateAll)
+                return;
+        }
+        if (category.equalsIgnoreCase("Reticle") || updateAll) {
+            boolean isDisabled = config.getReticleTrigger().equalsIgnoreCase("Disable");
+            boolean isHidden = config.getReticleTrigger().equalsIgnoreCase("Hide");
+            commandBuilder.set("#ReticleHideDelay.Visible", !(isDisabled || isHidden));
+            if (!updateAll)
+                return;
+        }
+        if (category.equalsIgnoreCase("Ammo") || updateAll) {
+            boolean isDisabled = config.getAmmoTrigger().equalsIgnoreCase("Disable");
+            commandBuilder.set("#AmmoHideDelay.Visible", !isDisabled);
+        }
     }
 
     private void bindPresetEvents(UIEventBuilder eventBuilder) {
@@ -469,6 +513,11 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
 
         sendUpdate(commandBuilder, eventBuilder, false);
         config.save();
+
+        // Update timer default
+        DynaHudComponent dynaHudComponent = ref.getStore().getComponent(ref, DynaHudPlugin.get().getDynaHudComponentType());
+        assert dynaHudComponent != null;
+        dynaHudComponent.updateTickTimers();
     }
 
     private void handlePresetEvent(SettingsEventData data, UICommandBuilder commandBuilder) {
@@ -477,27 +526,22 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
             switch (data.preset) {
                 case "Default":
                     config.reset();
-                    commandBuilder.set("#StatusBarHideDelay.Visible", true);
-                    commandBuilder.set("#HotbarHideDelay.Visible", true);
-                    commandBuilder.set("#ReticleHideDelay.Visible", false);
-                    commandBuilder.set("#AmmoHideDelay.Visible", true);
-                    commandBuilder.set("#StatusBarThresholdDelay.Visible", true);
-                    commandBuilder.set("#StatusBarCombatDelay.Visible", true);
-                    commandBuilder.set("#HotbarChangeDelay.Visible", true);
-                    commandBuilder.set("#HotbarCombatDelay.Visible", true);
+                    break;
+                case "Dynamic":
+                    config.reset();
+                    config.setPreset("Dynamic");
+                    config.setStatusBarTrigger("Both");
+                    config.setHotbarTrigger("Both");
                     break;
                 case "Disable":
+                    config.reset();
                     config.setPreset("Disable");
                     config.setStatusBarTrigger("Disable");
                     config.setHotbarTrigger("Disable");
-                    config.setReticleTrigger("Disable");
                     config.setAmmoTrigger("Disable");
                     config.setHideCompass(false);
                     config.setHideInputBindings(false);
-                    commandBuilder.set("#StatusBarHideDelay.Visible", false);
-                    commandBuilder.set("#HotbarHideDelay.Visible", false);
-                    commandBuilder.set("#ReticleHideDelay.Visible", false);
-                    commandBuilder.set("#AmmoHideDelay.Visible", false);
+                    break;
             }
             update(commandBuilder);
         }
@@ -508,38 +552,32 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
         switch (data.action) {
             case "SelectStatusBar":
                 config.setStatusBarTrigger(data.triggerStatusBar);
-                boolean isDisabled = data.triggerStatusBar.equalsIgnoreCase("Disable");
-                boolean isBothVisible = data.triggerStatusBar.equalsIgnoreCase("Both");
-                boolean isThresholdDelayVisible = data.triggerStatusBar.equalsIgnoreCase("Threshold") || isBothVisible;
-                boolean isCombatDelayVisible = data.triggerStatusBar.equalsIgnoreCase("Combat") || isBothVisible;
-                commandBuilder.set("#StatusBarHideDelay.Visible", !isDisabled);
-                commandBuilder.set("#StatusBarThresholdDelay.Visible", isThresholdDelayVisible);
-                commandBuilder.set("#StatusBarCombatDelay.Visible", isCombatDelayVisible);
+                updateDelayTime("StatusBar", commandBuilder);
                 break;
             case "StatusBarThresholdDelay":
                 if (data.subAction.equalsIgnoreCase("Slider")) {
                     commandBuilder.set("#StatusBarThresholdDelay #Field.Value", data.statusBarThresholdDelay);
-                    config.setStatusBarDelay(0, data.statusBarThresholdDelay);
+                    config.setStatusBarDelayThreshold(data.statusBarThresholdDelay);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
                     float thresholdValue = data.statusBarThresholdDelay;
                     if (thresholdValue < 0.1f) thresholdValue = 0.1f;
                     if (thresholdValue > 60.0f) thresholdValue = 60.0f;
                     commandBuilder.set("#StatusBarThresholdDelay #Field.Value", thresholdValue);
                     commandBuilder.set("#StatusBarThresholdDelay #Slider.Value", thresholdValue);
-                    config.setStatusBarDelay(0, data.statusBarThresholdDelay);
+                    config.setStatusBarDelayThreshold(data.statusBarThresholdDelay);
                 }
                 break;
             case "StatusBarCombatDelay":
                 if (data.subAction.equalsIgnoreCase("Slider")) {
                     commandBuilder.set("#StatusBarCombatDelay #Field.Value", data.statusBarCombatDelay);
-                    config.setStatusBarDelay(1, data.statusBarCombatDelay);
+                    config.setStatusBarDelayCombat(data.statusBarCombatDelay);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
                     float thresholdValue = data.statusBarCombatDelay;
                     if (thresholdValue < 0.1f) thresholdValue = 0.1f;
                     if (thresholdValue > 60.0f) thresholdValue = 60.0f;
                     commandBuilder.set("#StatusBarCombatDelay #Field.Value", thresholdValue);
                     commandBuilder.set("#StatusBarCombatDelay #Slider.Value", thresholdValue);
-                    config.setStatusBarDelay(1, data.statusBarCombatDelay);
+                    config.setStatusBarDelayCombat(data.statusBarCombatDelay);
                 }
                 break;
             case "SliderHealthThreshold":
@@ -591,38 +629,32 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
         switch (data.action) {
             case "SelectHotbar":
                 config.setHotbarTrigger(data.triggerHotbar);
-                boolean isDisabled = data.triggerHotbar.equalsIgnoreCase("Disable");
-                boolean isBothVisible = data.triggerHotbar.equalsIgnoreCase("Both");
-                boolean isChangeDelayVisible = data.triggerHotbar.equalsIgnoreCase("Change") || isBothVisible;
-                boolean isCombatDelayVisible = data.triggerHotbar.equalsIgnoreCase("Combat") || isBothVisible;
-                commandBuilder.set("#HotbarHideDelay.Visible", !isDisabled);
-                commandBuilder.set("#HotbarChangeDelay.Visible", isChangeDelayVisible);
-                commandBuilder.set("#HotbarCombatDelay.Visible", isCombatDelayVisible);
+                updateDelayTime("Hotbar", commandBuilder);
                 break;
             case "HotbarChangeDelay":
                 if (data.subAction.equalsIgnoreCase("Slider")) {
                     commandBuilder.set("#HotbarChangeDelay #Field.Value", data.hotbarChangeDelay);
-                    config.setHotbarDelay(0, data.hotbarChangeDelay);
+                    config.setHotbarDelayChange(data.hotbarChangeDelay);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
                     float thresholdValue = data.hotbarChangeDelay;
                     if (thresholdValue < 0.1f) thresholdValue = 0.1f;
                     if (thresholdValue > 60.0f) thresholdValue = 60.0f;
                     commandBuilder.set("#HotbarChangeDelay #Field.Value", thresholdValue);
                     commandBuilder.set("#HotbarChangeDelay #Slider.Value", thresholdValue);
-                    config.setHotbarDelay(0, data.hotbarChangeDelay);
+                    config.setHotbarDelayChange(data.hotbarChangeDelay);
                 }
                 break;
             case "HotbarCombatDelay":
                 if (data.subAction.equalsIgnoreCase("Slider")) {
                     commandBuilder.set("#HotbarCombatDelay #Field.Value", data.hotbarCombatDelay);
-                    config.setHotbarDelay(1, data.hotbarCombatDelay);
+                    config.setHotbarDelayCombat(data.hotbarCombatDelay);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
                     float thresholdValue = data.hotbarCombatDelay;
                     if (thresholdValue < 0.1f) thresholdValue = 0.1f;
                     if (thresholdValue > 60.0f) thresholdValue = 60.0f;
                     commandBuilder.set("#HotbarCombatDelay #Field.Value", thresholdValue);
                     commandBuilder.set("#HotbarCombatDelay #Slider.Value", thresholdValue);
-                    config.setHotbarDelay(1, data.hotbarCombatDelay);
+                    config.setHotbarDelayCombat(data.hotbarCombatDelay);
                 }
                 break;
         }
@@ -635,21 +667,19 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
         switch (data.action) {
             case "SelectReticle":
                 config.setReticleTrigger(data.triggerReticle);
-                boolean isDisabled = data.triggerReticle.equalsIgnoreCase("Disable");
-                boolean isHidden = data.triggerReticle.equalsIgnoreCase("Hide");
-                commandBuilder.set("#ReticleHideDelay.Visible", !(isDisabled || isHidden));
+                updateDelayTime("Reticle", commandBuilder);
                 break;
             case "ReticleCombatDelay":
                 if (data.subAction.equalsIgnoreCase("Slider")) {
                     commandBuilder.set("#ReticleCombatDelay #Field.Value", data.reticleCombatDelay);
-                    config.setReticleDelay(data.reticleCombatDelay);
+                    config.setReticleDelayCombat(data.reticleCombatDelay);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
                     float thresholdValue = data.reticleCombatDelay;
                     if (thresholdValue < 0.1f) thresholdValue = 0.1f;
                     if (thresholdValue > 60.0f) thresholdValue = 60.0f;
                     commandBuilder.set("#ReticleCombatDelay #Field.Value", thresholdValue);
                     commandBuilder.set("#ReticleCombatDelay #Slider.Value", thresholdValue);
-                    config.setReticleDelay(data.reticleCombatDelay);
+                    config.setReticleDelayCombat(data.reticleCombatDelay);
                 }
                 break;
         }
@@ -662,20 +692,19 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
         switch (data.action) {
             case "SelectAmmo":
                 config.setAmmoTrigger(data.triggerAmmo);
-                boolean isDisabled = data.triggerAmmo.equalsIgnoreCase("Disable");
-                commandBuilder.set("#AmmoHideDelay.Visible", !isDisabled);
+                updateDelayTime("Ammo", commandBuilder);
                 break;
             case "AmmoReloadDelay":
                 if (data.subAction.equalsIgnoreCase("Slider")) {
                     commandBuilder.set("#AmmoReloadDelay #Field.Value", data.ammoReloadDelay);
-                    config.setAmmoDelay(data.ammoReloadDelay);
+                    config.setAmmoDelayThreshold(data.ammoReloadDelay);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
                     float thresholdValue = data.ammoReloadDelay;
                     if (thresholdValue < 1.0f) thresholdValue = 1.0f;
                     if (thresholdValue > 100.0f) thresholdValue = 100.0f;
                     commandBuilder.set("#AmmoReloadDelay #Field.Value", thresholdValue);
                     commandBuilder.set("#AmmoReloadDelay #Slider.Value", thresholdValue);
-                    config.setAmmoDelay(data.ammoReloadDelay);
+                    config.setAmmoDelayThreshold(data.ammoReloadDelay);
                 }
                 break;
         }
