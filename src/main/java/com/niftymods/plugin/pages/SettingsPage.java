@@ -210,8 +210,8 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
 
         // Ammo
         commandBuilder.set("#SelectAmmo #Dropdown.Value", config.getAmmoTrigger());
-        commandBuilder.set("#AmmoReloadDelay #Slider.Value", config.getAmmoDelayThreshold());
-        commandBuilder.set("#AmmoReloadDelay #Field.Value", config.getAmmoDelayThreshold());
+        commandBuilder.set("#AmmoReloadDelay #Slider.Value", config.getAmmoDelayReload());
+        commandBuilder.set("#AmmoReloadDelay #Field.Value", config.getAmmoDelayReload());
 
         // Misc
         commandBuilder.set("#CheckBoxCompass #CheckBox.Value", config.isHideCompass());
@@ -559,11 +559,11 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
                     commandBuilder.set("#StatusBarThresholdDelay #Field.Value", data.statusBarThresholdDelay);
                     config.setStatusBarDelayThreshold(data.statusBarThresholdDelay);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
-                    float thresholdValue = data.statusBarThresholdDelay;
-                    if (thresholdValue < 0.1f) thresholdValue = 0.1f;
-                    if (thresholdValue > 60.0f) thresholdValue = 60.0f;
-                    commandBuilder.set("#StatusBarThresholdDelay #Field.Value", thresholdValue);
-                    commandBuilder.set("#StatusBarThresholdDelay #Slider.Value", thresholdValue);
+                    float durationValue = data.statusBarThresholdDelay;
+                    if (durationValue < PlayerConfig.DURATION_MIN) durationValue = PlayerConfig.DURATION_MIN;
+                    if (durationValue > PlayerConfig.DURATION_MAX) durationValue = PlayerConfig.DURATION_MAX;
+                    commandBuilder.set("#StatusBarThresholdDelay #Field.Value", durationValue);
+                    commandBuilder.set("#StatusBarThresholdDelay #Slider.Value", durationValue);
                     config.setStatusBarDelayThreshold(data.statusBarThresholdDelay);
                 }
                 break;
@@ -572,11 +572,11 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
                     commandBuilder.set("#StatusBarCombatDelay #Field.Value", data.statusBarCombatDelay);
                     config.setStatusBarDelayCombat(data.statusBarCombatDelay);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
-                    float thresholdValue = data.statusBarCombatDelay;
-                    if (thresholdValue < 0.1f) thresholdValue = 0.1f;
-                    if (thresholdValue > 60.0f) thresholdValue = 60.0f;
-                    commandBuilder.set("#StatusBarCombatDelay #Field.Value", thresholdValue);
-                    commandBuilder.set("#StatusBarCombatDelay #Slider.Value", thresholdValue);
+                    float durationValue = data.statusBarCombatDelay;
+                    if (durationValue < PlayerConfig.DURATION_MIN) durationValue = PlayerConfig.DURATION_MIN;
+                    if (durationValue > PlayerConfig.DURATION_MAX) durationValue = PlayerConfig.DURATION_MAX;
+                    commandBuilder.set("#StatusBarCombatDelay #Field.Value", durationValue);
+                    commandBuilder.set("#StatusBarCombatDelay #Slider.Value", durationValue);
                     config.setStatusBarDelayCombat(data.statusBarCombatDelay);
                 }
                 break;
@@ -586,8 +586,8 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
                     config.setHealthThreshold(data.thresholdHealth);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
                     float thresholdValue = data.thresholdHealth;
-                    if (thresholdValue < 1.0f) thresholdValue = 1.0f;
-                    if (thresholdValue > 100.0f) thresholdValue = 100.0f;
+                    if (thresholdValue < PlayerConfig.THRESHOLD_MIN) thresholdValue = PlayerConfig.THRESHOLD_MIN;
+                    if (thresholdValue > PlayerConfig.THRESHOLD_MAX) thresholdValue = PlayerConfig.THRESHOLD_MAX;
                     commandBuilder.set("#SliderHealthThreshold #Field.Value", thresholdValue);
                     commandBuilder.set("#SliderHealthThreshold #Slider.Value", thresholdValue);
                     config.setHealthThreshold(data.thresholdHealth);
@@ -599,8 +599,8 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
                     config.setStaminaThreshold(data.thresholdStamina);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
                     float thresholdValue = data.thresholdStamina;
-                    if (thresholdValue < 1.0f) thresholdValue = 1.0f;
-                    if (thresholdValue > 100.0f) thresholdValue = 100.0f;
+                    if (thresholdValue < PlayerConfig.THRESHOLD_MIN) thresholdValue = PlayerConfig.THRESHOLD_MIN;
+                    if (thresholdValue > PlayerConfig.THRESHOLD_MAX) thresholdValue = PlayerConfig.THRESHOLD_MAX;
                     commandBuilder.set("#SliderStaminaThreshold #Field.Value", thresholdValue);
                     commandBuilder.set("#SliderStaminaThreshold #Slider.Value", thresholdValue);
                     config.setStaminaThreshold(data.thresholdStamina);
@@ -612,8 +612,8 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
                     config.setManaThreshold(data.thresholdMana);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
                     float thresholdValue = data.thresholdMana;
-                    if (thresholdValue < 1.0f) thresholdValue = 1.0f;
-                    if (thresholdValue > 100.0f) thresholdValue = 100.0f;
+                    if (thresholdValue < PlayerConfig.THRESHOLD_MIN) thresholdValue = PlayerConfig.THRESHOLD_MIN;
+                    if (thresholdValue > PlayerConfig.THRESHOLD_MAX) thresholdValue = PlayerConfig.THRESHOLD_MAX;
                     commandBuilder.set("#SliderManaThreshold #Field.Value", thresholdValue);
                     commandBuilder.set("#SliderManaThreshold #Slider.Value", thresholdValue);
                     config.setManaThreshold(data.thresholdMana);
@@ -636,11 +636,11 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
                     commandBuilder.set("#HotbarChangeDelay #Field.Value", data.hotbarChangeDelay);
                     config.setHotbarDelayChange(data.hotbarChangeDelay);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
-                    float thresholdValue = data.hotbarChangeDelay;
-                    if (thresholdValue < 0.1f) thresholdValue = 0.1f;
-                    if (thresholdValue > 60.0f) thresholdValue = 60.0f;
-                    commandBuilder.set("#HotbarChangeDelay #Field.Value", thresholdValue);
-                    commandBuilder.set("#HotbarChangeDelay #Slider.Value", thresholdValue);
+                    float durationValue = data.hotbarChangeDelay;
+                    if (durationValue < PlayerConfig.DURATION_MIN) durationValue = PlayerConfig.DURATION_MIN;
+                    if (durationValue > PlayerConfig.DURATION_MAX) durationValue = PlayerConfig.DURATION_MAX;
+                    commandBuilder.set("#HotbarChangeDelay #Field.Value", durationValue);
+                    commandBuilder.set("#HotbarChangeDelay #Slider.Value", durationValue);
                     config.setHotbarDelayChange(data.hotbarChangeDelay);
                 }
                 break;
@@ -649,11 +649,11 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
                     commandBuilder.set("#HotbarCombatDelay #Field.Value", data.hotbarCombatDelay);
                     config.setHotbarDelayCombat(data.hotbarCombatDelay);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
-                    float thresholdValue = data.hotbarCombatDelay;
-                    if (thresholdValue < 0.1f) thresholdValue = 0.1f;
-                    if (thresholdValue > 60.0f) thresholdValue = 60.0f;
-                    commandBuilder.set("#HotbarCombatDelay #Field.Value", thresholdValue);
-                    commandBuilder.set("#HotbarCombatDelay #Slider.Value", thresholdValue);
+                    float durationValue = data.hotbarCombatDelay;
+                    if (durationValue < PlayerConfig.DURATION_MIN) durationValue = PlayerConfig.DURATION_MIN;
+                    if (durationValue > PlayerConfig.DURATION_MAX) durationValue = PlayerConfig.DURATION_MAX;
+                    commandBuilder.set("#HotbarCombatDelay #Field.Value", durationValue);
+                    commandBuilder.set("#HotbarCombatDelay #Slider.Value", durationValue);
                     config.setHotbarDelayCombat(data.hotbarCombatDelay);
                 }
                 break;
@@ -674,11 +674,11 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
                     commandBuilder.set("#ReticleCombatDelay #Field.Value", data.reticleCombatDelay);
                     config.setReticleDelayCombat(data.reticleCombatDelay);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
-                    float thresholdValue = data.reticleCombatDelay;
-                    if (thresholdValue < 0.1f) thresholdValue = 0.1f;
-                    if (thresholdValue > 60.0f) thresholdValue = 60.0f;
-                    commandBuilder.set("#ReticleCombatDelay #Field.Value", thresholdValue);
-                    commandBuilder.set("#ReticleCombatDelay #Slider.Value", thresholdValue);
+                    float durationValue = data.reticleCombatDelay;
+                    if (durationValue < PlayerConfig.DURATION_MIN) durationValue = PlayerConfig.DURATION_MIN;
+                    if (durationValue > PlayerConfig.DURATION_MAX) durationValue = PlayerConfig.DURATION_MAX;
+                    commandBuilder.set("#ReticleCombatDelay #Field.Value", durationValue);
+                    commandBuilder.set("#ReticleCombatDelay #Slider.Value", durationValue);
                     config.setReticleDelayCombat(data.reticleCombatDelay);
                 }
                 break;
@@ -697,14 +697,14 @@ public class SettingsPage extends InteractiveCustomUIPage<SettingsPage.SettingsE
             case "AmmoReloadDelay":
                 if (data.subAction.equalsIgnoreCase("Slider")) {
                     commandBuilder.set("#AmmoReloadDelay #Field.Value", data.ammoReloadDelay);
-                    config.setAmmoDelayThreshold(data.ammoReloadDelay);
+                    config.setAmmoDelayReload(data.ammoReloadDelay);
                 } else if (data.subAction.equalsIgnoreCase("Field")) {
-                    float thresholdValue = data.ammoReloadDelay;
-                    if (thresholdValue < 1.0f) thresholdValue = 1.0f;
-                    if (thresholdValue > 100.0f) thresholdValue = 100.0f;
-                    commandBuilder.set("#AmmoReloadDelay #Field.Value", thresholdValue);
-                    commandBuilder.set("#AmmoReloadDelay #Slider.Value", thresholdValue);
-                    config.setAmmoDelayThreshold(data.ammoReloadDelay);
+                    float durationValue = data.ammoReloadDelay;
+                    if (durationValue < PlayerConfig.DURATION_MIN) durationValue = PlayerConfig.DURATION_MIN;
+                    if (durationValue > PlayerConfig.DURATION_MAX) durationValue = PlayerConfig.DURATION_MAX;
+                    commandBuilder.set("#AmmoReloadDelay #Field.Value", durationValue);
+                    commandBuilder.set("#AmmoReloadDelay #Slider.Value", durationValue);
+                    config.setAmmoDelayReload(data.ammoReloadDelay);
                 }
                 break;
         }

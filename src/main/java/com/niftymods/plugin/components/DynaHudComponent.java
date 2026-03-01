@@ -70,7 +70,7 @@ public class DynaHudComponent implements Component<EntityStore> {
         healthBarTickTimer.setDefaultTime(playerConfig.getStatusBarDelayThreshold());
         staminaBarTickTimer.setDefaultTime(playerConfig.getStatusBarDelayThreshold());
         manaBarTickTimer.setDefaultTime(playerConfig.getStatusBarDelayThreshold());
-        ammoBarTickTimer.setDefaultTime(playerConfig.getAmmoDelayThreshold());
+        ammoBarTickTimer.setDefaultTime(playerConfig.getAmmoDelayReload());
         hotbarTickTimer.setDefaultTime(playerConfig.getHotbarDelayChange());
         statusBarCombatTickTimer.setDefaultTime(playerConfig.getStatusBarDelayCombat());
         hotbarCombatTickTimer.setDefaultTime(playerConfig.getHotbarDelayCombat());
@@ -113,7 +113,7 @@ public class DynaHudComponent implements Component<EntityStore> {
         healthBarTickTimer.setDefaultTime(playerConfig.getStatusBarDelayThreshold());
         staminaBarTickTimer.setDefaultTime(playerConfig.getStatusBarDelayThreshold());
         manaBarTickTimer.setDefaultTime(playerConfig.getStatusBarDelayThreshold());
-        ammoBarTickTimer.setDefaultTime(playerConfig.getAmmoDelayThreshold());
+        ammoBarTickTimer.setDefaultTime(playerConfig.getAmmoDelayReload());
         hotbarTickTimer.setDefaultTime(playerConfig.getHotbarDelayChange());
         statusBarCombatTickTimer.setDefaultTime(playerConfig.getStatusBarDelayCombat());
         hotbarCombatTickTimer.setDefaultTime(playerConfig.getHotbarDelayCombat());

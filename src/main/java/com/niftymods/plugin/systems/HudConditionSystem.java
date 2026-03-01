@@ -53,29 +53,34 @@ public class HudConditionSystem extends EntityTickingSystem<EntityStore> {
         boolean isEnabled = config.getStatusBarTrigger().equalsIgnoreCase("Both") ||
                 config.getStatusBarTrigger().equalsIgnoreCase("Threshold");
         if (isEnabled) {
+            float maxThreshold = PlayerConfig.THRESHOLD_MAX;
+
             // Health
-            handleStatType(
-                    statMap,
-                    DefaultEntityStatTypes.getHealth(),
-                    dynaHudComponent.getHealthBarTickTimer(),
-                    config.getHealthThreshold()
-            );
+            if (config.getHealthThreshold() < maxThreshold)
+                handleStatType(
+                        statMap,
+                        DefaultEntityStatTypes.getHealth(),
+                        dynaHudComponent.getHealthBarTickTimer(),
+                        config.getHealthThreshold()
+                );
 
             // Stamina
-            handleStatType(
-                    statMap,
-                    DefaultEntityStatTypes.getStamina(),
-                    dynaHudComponent.getStaminaBarTickTimer(),
-                    config.getStaminaThreshold()
-            );
+            if (config.getStaminaThreshold() < maxThreshold)
+                handleStatType(
+                        statMap,
+                        DefaultEntityStatTypes.getStamina(),
+                        dynaHudComponent.getStaminaBarTickTimer(),
+                        config.getStaminaThreshold()
+                );
 
             // Mana
-            handleStatType(
-                    statMap,
-                    DefaultEntityStatTypes.getMana(),
-                    dynaHudComponent.getManaBarTickTimer(),
-                    config.getManaThreshold()
-            );
+            if (config.getManaThreshold() < maxThreshold)
+                handleStatType(
+                        statMap,
+                        DefaultEntityStatTypes.getMana(),
+                        dynaHudComponent.getManaBarTickTimer(),
+                        config.getManaThreshold()
+                );
         }
     }
 

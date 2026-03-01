@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.niftymods.plugin.DynaHudPlugin;
+import com.niftymods.plugin.utils.NumRange;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -13,8 +14,12 @@ import java.nio.file.Path;
 public class PlayerConfig {
 
     public static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+    public static final float THRESHOLD_MAX = 100f;
+    public static final float THRESHOLD_MIN = 1f;
+    public static final float DURATION_MAX = 60f;
+    public static final float DURATION_MIN = 0.1f;
 
-    private String version = "1.0.0";
+    private String version = "1.0.1";
     private String playerId;
     private String preset = "Default";
     private String statusBarTrigger = "Threshold";
@@ -29,7 +34,7 @@ public class PlayerConfig {
     private String reticleTrigger = "Disable";
     private float reticleDelayCombat = 30.0f;
     private String ammoTrigger = "Reload";
-    private float ammoDelayThreshold = 1.5f;
+    private float ammoDelayReload = 1.5f;
     private boolean hideCompass = true;
     private boolean hideInputBindings = true;
 
@@ -81,6 +86,8 @@ public class PlayerConfig {
         Path configPath = dynaHudPlugin.getDataDirectory().resolve("players/" + playerId + ".json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+        validateOut();
+
         // Create players directory if missing
         if(configPath.getParent().toFile().mkdirs()) {
             LOGGER.atInfo().log("Failed to find players folder. Creating directory... ");
@@ -92,6 +99,19 @@ public class PlayerConfig {
         } catch (IOException e) {
             LOGGER.atSevere().withCause(e).log("Failed to save player config for " + playerId);
         }
+    }
+
+    // Note: any future validation must be placed here.
+    private void validateOut() {
+        statusBarDelayThreshold = NumRange.validate(statusBarDelayThreshold, DURATION_MIN, DURATION_MAX);
+        statusBarDelayCombat =  NumRange.validate(statusBarDelayCombat, DURATION_MIN, DURATION_MAX);
+        healthThreshold = NumRange.validate(healthThreshold, THRESHOLD_MIN, THRESHOLD_MAX);
+        staminaThreshold = NumRange.validate(staminaThreshold, THRESHOLD_MIN, THRESHOLD_MAX);
+        manaThreshold = NumRange.validate(manaThreshold, THRESHOLD_MIN, THRESHOLD_MAX);
+        hotbarDelayChange = NumRange.validate(hotbarDelayChange, DURATION_MIN, DURATION_MAX);
+        hotbarDelayCombat = NumRange.validate(hotbarDelayCombat, DURATION_MIN, DURATION_MAX);
+        reticleDelayCombat = NumRange.validate(reticleDelayCombat, DURATION_MIN, DURATION_MAX);
+        ammoDelayReload = NumRange.validate(ammoDelayReload, DURATION_MIN, DURATION_MAX);
     }
 
     public void reset() {
@@ -109,7 +129,7 @@ public class PlayerConfig {
         this.reticleTrigger = other.reticleTrigger;
         this.reticleDelayCombat = other.reticleDelayCombat;
         this.ammoTrigger = other.ammoTrigger;
-        this.ammoDelayThreshold = other.ammoDelayThreshold;
+        this.ammoDelayReload = other.ammoDelayReload;
         this.hideCompass = other.hideCompass;
         this.hideInputBindings = other.hideInputBindings;
     }
@@ -214,9 +234,9 @@ public class PlayerConfig {
 
     public void setAmmoTrigger(String ammoTrigger) { this.ammoTrigger = ammoTrigger; }
 
-    public float getAmmoDelayThreshold() { return ammoDelayThreshold; }
+    public float getAmmoDelayReload() { return ammoDelayReload; }
 
-    public void setAmmoDelayThreshold(float ammoDelayThreshold) { this.ammoDelayThreshold = ammoDelayThreshold; }
+    public void setAmmoDelayReload(float ammoDelayReload) { this.ammoDelayReload = ammoDelayReload; }
 
     public boolean isHideCompass() {
         return hideCompass;
