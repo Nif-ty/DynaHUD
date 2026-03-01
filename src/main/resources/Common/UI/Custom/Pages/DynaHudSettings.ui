@@ -172,16 +172,19 @@ $C.@PageOverlay {
 
         @SliderWithLabel #SliderHealthThreshold {
           @Title = "Health Threshold";
+          TooltipText: "The percentage limit required for Health to appear. Set to 100 to disable separately.";
         }
         @VerticalSpacer {}
 
         @SliderWithLabel #SliderStaminaThreshold {
           @Title = "Stamina Threshold";
+          TooltipText: "The percentage limit required for Stamina to appear. Set to 100 to disable separately.";
         }
         @VerticalSpacer {}
 
         @SliderWithLabel #SliderManaThreshold {
           @Title = "Mana Threshold";
+          TooltipText: "The percentage limit required for Mana to appear. Set to 100 to disable separately.";
         }
         @VerticalSpacer {}
         @VerticalSpacer {}

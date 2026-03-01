@@ -60,20 +60,24 @@ public class DynaHudSystem extends EntityTickingSystem<EntityStore> {
     ) {
         boolean disabled = config.getStatusBarTrigger().equalsIgnoreCase("Disable");
         boolean inCombat = dynaHudComponent.getStatusBarCombatTickTimer().isRunning();
+
         // Health
-        if (disabled || inCombat || dynaHudComponent.getHealthBarTickTimer().isRunning()) {
+        boolean healthDisabled = config.getHealthThreshold() >= PlayerConfig.THRESHOLD_MAX;
+        if (disabled || healthDisabled || inCombat || dynaHudComponent.getHealthBarTickTimer().isRunning()) {
             showHudComponent(hudManager, playerRef, HudComponent.Health);
         } else {
             hideHudComponent(hudManager, playerRef, HudComponent.Health);
         }
         // Stamina
-        if (disabled || inCombat || dynaHudComponent.getStaminaBarTickTimer().isRunning()) {
+        boolean staminaDisabled = config.getStaminaThreshold() >= PlayerConfig.THRESHOLD_MAX;
+        if (disabled || staminaDisabled || inCombat || dynaHudComponent.getStaminaBarTickTimer().isRunning()) {
             showHudComponent(hudManager, playerRef, HudComponent.Stamina);
         } else {
             hideHudComponent(hudManager, playerRef, HudComponent.Stamina);
         }
         // Mana
-        if (disabled || inCombat || dynaHudComponent.getManaBarTickTimer().isRunning()) {
+        boolean manaDisabled = config.getManaThreshold() >= PlayerConfig.THRESHOLD_MAX;
+        if (disabled || manaDisabled || inCombat || dynaHudComponent.getManaBarTickTimer().isRunning()) {
             showHudComponent(hudManager, playerRef, HudComponent.Mana);
         } else {
             hideHudComponent(hudManager, playerRef, HudComponent.Mana);
